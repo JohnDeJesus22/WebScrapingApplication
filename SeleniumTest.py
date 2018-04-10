@@ -1,6 +1,7 @@
 # Selenium Testing
 
 import time
+import selenium
 from selenium import webdriver
 
 #test code from Selenium docs
@@ -13,25 +14,22 @@ search_box.submit()
 time.sleep(5) # Let the user actually see something!
 driver.quit()
 
-#first normal attempt with data.world successful
-#trying now with a card spoiler page and select one item and print (successful)
-driver = webdriver.Chrome('chromedriver.exe')  # Optional argument, if not specified will search path.
-driver.get('https://www.mtgsalvation.com/spoilers/220-dominaria')
-import re
-card_elements=driver.find_elements_by_xpath('//div[@id="card-34207"]')
-print(card_elements)
-driver.quit
-
-#logging in to data.world with selenium (need)
+#logging in to data.world with selenium success on 4/9/18 with logging in and out
 driver = webdriver.Chrome('chromedriver.exe')
 driver.get('https://data.world/login')
-username = driver.find_element_by_id("username")
-password = driver.find_element_by_id("password")
+username = driver.find_element_by_xpath("//input[@placeholder='Username or email address']")
+password = driver.find_element_by_xpath("//input[@placeholder='Password']")
 
-username.send_keys("Username")
-password.send_keys("Password")
+username.send_keys("username")
+password.send_keys("password")
 
-selenium.find_element_by_name("submit").click()
+driver.find_element_by_xpath("//button[@type='submit']").click()
+time.sleep(5)
+driver.find_element_by_xpath("//li[@class='Header__menu_account___3jT6C dw-UserSettingsDropdown dropdown']").click()
+time.sleep(5)
+driver.find_element_by_xpath("//li[@class='Header__itemSignOut___UfV3_']").click()
+time.sleep(5)
+driver.quit()
 
 #html to get post using first example
 #1. full post: span tag with id=6 digit number
