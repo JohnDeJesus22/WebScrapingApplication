@@ -20,19 +20,42 @@ driver.get('https://data.world/login')
 username = driver.find_element_by_xpath("//input[@placeholder='Username or email address']")
 password = driver.find_element_by_xpath("//input[@placeholder='Password']")
 
+#input username and password
 username.send_keys("username")
 password.send_keys("password")
-
 driver.find_element_by_xpath("//button[@type='submit']").click()
+
+#go to url and then signout
 time.sleep(5)
+url='https://data.world/makeovermonday/what-is-the-uks-favorite-chocolate-bar/discuss/2018-w13-what-is-the-uks-favorite-chocolate-bar/95666'
+driver.get(url)
+
+#get names
+name_elements=driver.find_elements_by_xpath("//a[@class='post__username___YIalv']")
+names=[name.text for name in name_elements[1:]]
+
+#get viz picks
+vizpic_elements=driver.find_elements_by_xpath("//img")
+vizpics=[vizpic.get_attribute('src') for vizpic in vizpic_elements[11:]]#slicing here not index
+#one?
+
+#get viz links: neeed to adjust to get correct links
+link_elements=driver.find_elements_by_xpath("//div[@class='Markdown__content___3thyu']//p//a")
+links=[link.get_attribute('href') for link in link_elements]
+
+time.sleep(3)
 driver.find_element_by_xpath("//li[@class='Header__menu_account___3jT6C dw-UserSettingsDropdown dropdown']").click()
 time.sleep(5)
 driver.find_element_by_xpath("//li[@class='Header__itemSignOut___UfV3_']").click()
 time.sleep(5)
 driver.quit()
 
+
 #html to get post using first example
-#1. full post: span tag with id=6 digit number
+#website
+#https://data.world/makeovermonday/what-is-the-uks-favorite-chocolate-bar/discuss/2018-w13-what-is-the-uks-favorite-chocolate-bar/95666
+
+#1. full post: span tag with id=6 digit number or use div class='caption'
 #items we need:
 
 #2. Username
