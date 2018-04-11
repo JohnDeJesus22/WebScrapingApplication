@@ -37,7 +37,7 @@ names=[name.text for name in name_elements[1:]]
 #get viz picks
 vizpic_elements=driver.find_elements_by_xpath("//img")
 vizpics=[vizpic.get_attribute('src') for vizpic in vizpic_elements[11:]]#slicing here not index
-#one?
+#one
 
 #get viz links: neeed to adjust to get correct links
 link_elements=driver.find_elements_by_xpath("//div[@class='Markdown__content___3thyu']//p//a")
