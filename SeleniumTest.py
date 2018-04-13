@@ -2,6 +2,7 @@
 
 #import libraries
 import time
+import pandas as pd
 import selenium
 from selenium import webdriver
 
@@ -21,10 +22,25 @@ time.sleep(5)
 url='https://data.world/makeovermonday/what-is-the-uks-favorite-chocolate-bar/discuss/2018-w13-what-is-the-uks-favorite-chocolate-bar/95666'
 driver.get(url)
 
-#get post
 posts=driver.find_elements_by_xpath("//span[@class='clearfix post__post___3ETgv dw-Post collapse in list-group-item']")
-#for post in posts:
-   # name = 
+ids=[id.get_attribute('id') for id in posts]
+'''
+#get post
+posts=driver.find_elements_by_xpath("//div[@class='post__thumbnail___33jZY DatasetCard__thumbnail___33EHZ']")
+info=[]
+for i in range(len(posts)):
+    name = posts[i].find_element_by_xpath("//a[@class='post__username___YIalv']")
+    name=name.text
+    vizpic=posts[i].find_element_by_tag_name("img")
+    vizpic=vizpic.get_attribute('src')
+    try:
+        link=posts[i].find_element_by_link_text('Interactive Viz').get_attribute('href')
+    except:
+        link=None
+    info.append((name, vizpic,link))
+
+data=pd.DataFrame(info,columns=['Name','VizPic', 'Link'])
+
 
 #get names
 name_elements=driver.find_elements_by_xpath("//a[@class='post__username___YIalv']")
@@ -33,10 +49,11 @@ names=[name.text for name in name_elements[1:]]
 #get viz picks
 vizpic_elements=driver.find_elements_by_xpath("//img")
 vizpics=[vizpic.get_attribute('src') for vizpic in vizpic_elements[11:]]
-
+'''
 # get links
 link_elements=driver.find_elements_by_link_text('Interactive Viz')
 links=[link.get_attribute('href') for link in link_elements]
+
 
 
 #signout and close the window
