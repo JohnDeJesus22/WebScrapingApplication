@@ -12,8 +12,8 @@ username = driver.find_element_by_xpath("//input[@placeholder='Username or email
 password = driver.find_element_by_xpath("//input[@placeholder='Password']")
 
 #input username and password
-username.send_keys("j.dejesus22@gmail.com")
-password.send_keys("sabalken44")
+username.send_keys("username")
+password.send_keys("password")
 driver.find_element_by_xpath("//button[@type='submit']").click()
 
 #go to url
