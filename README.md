@@ -10,3 +10,4 @@ Kevin Markham's Twitter Tag: @justmarkham
 
 4. Selenium Testing: Logged in/out of data.world on 4/9/18
 Able to extract name and viz pic from discussion thread.
+4/14/18: Took longer due to other commitments but was able to generalize scraping a desired discussion thread of viz entries from data.word. 
