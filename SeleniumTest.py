@@ -13,7 +13,7 @@ username = driver.find_element_by_xpath("//input[@placeholder='Username or email
 password = driver.find_element_by_xpath("//input[@placeholder='Password']")
 
 #input username and password
-username.send_keys("j.dejesus22@gmail.com")
+username.send_keys("username")
 password.send_keys("password")
 driver.find_element_by_xpath("//button[@type='submit']").click()
 
@@ -25,6 +25,7 @@ driver.get(url)
 #get post
 posts=driver.find_elements_by_xpath("//div[@class='post__thumbnail___33jZY DatasetCard__thumbnail___33EHZ']")
 info=[]
+week_numbers=[i for i in range(1,17)]
 for i in range(len(posts)):
     name = posts[i].find_element_by_xpath(".//a[@class='post__username___YIalv']")
     name=name.text
@@ -34,28 +35,17 @@ for i in range(len(posts)):
     except:
         vizpic=None
     try:
-        link=posts[i].find_element_by_link_text('Interactive Viz').get_attribute('href')
+        #first a leads to link to profile. Will be useful to get real names
+        #link=posts[i].find_element_by_xpath('.//a').get_attribute('href')
+        #will use above with driver.execute_script("window.history.go(-1)")
+        #to return to original page after getting names from profile. (snippet from stackoverflow)
+        link=posts[i].find_element_by_xpath('.//a[@target="_blank"]').get_attribute('href')
     except:
         link=None
     info.append((name, vizpic,link))
 
 data=pd.DataFrame(info,columns=['Name','VizPic', 'Link'])
-data.to_csv('datadotworld_wk13_vizzes.csv',index=False)
-
-'''
-#get names
-name_elements=driver.find_elements_by_xpath("//a[@class='post__username___YIalv']")
-names=[name.text for name in name_elements[1:]]
-
-#get viz picks
-vizpic_elements=driver.find_elements_by_xpath("//img")
-vizpics=[vizpic.get_attribute('src') for vizpic in vizpic_elements[11:]]
-
-# get links
-link_elements=driver.find_elements_by_link_text('Interactive Viz')
-links=[link.get_attribute('href') for link in link_elements]
-
-'''
+#data.to_csv('datadotworld_wk13_vizzes.csv',index=False)
 
 #signout and close the window
 time.sleep(3)
