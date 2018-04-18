@@ -2,6 +2,7 @@
 
 #import libraries
 import time
+import re
 import pandas as pd
 import selenium
 from selenium import webdriver
@@ -13,8 +14,8 @@ username = driver.find_element_by_xpath("//input[@placeholder='Username or email
 password = driver.find_element_by_xpath("//input[@placeholder='Password']")
 
 #input username and password
-username.send_keys("username")
-password.send_keys("password")
+username.send_keys("j.dejesus22@gmail.com")
+password.send_keys("sabalken44")
 driver.find_element_by_xpath("//button[@type='submit']").click()
 
 #list of links
@@ -35,38 +36,42 @@ week_urls=['https://data.world/makeovermonday/2018-w-1-u-s-per-capita-consumptio
             'https://data.world/makeovermonday/2018w15-arctic-sea-ice-extent/discuss/2018-w15-arctic-sea-ice-extent/100922'
             ]
 
-#for week_url in week_urls
-#   driver.get(week_url)
 
 #go to url
 time.sleep(5)
-url='https://data.world/makeovermonday/what-is-the-uks-favorite-chocolate-bar/discuss/2018-w13-what-is-the-uks-favorite-chocolate-bar/95666'
-driver.get(url)
-
-#get post
-posts=driver.find_elements_by_xpath("//div[@class='post__thumbnail___33jZY DatasetCard__thumbnail___33EHZ']")
 info=[]
-week_numbers=[i for i in range(1,17)]
-for i in range(len(posts)):
-    name = posts[i].find_element_by_xpath(".//a[@class='post__username___YIalv']")
-    name=name.text
-    try:
-        vizpic=posts[i].find_element_by_xpath(".//img")
-        vizpic=vizpic.get_attribute('src')
-    except:
-        vizpic=None
-    try:
-        #first a leads to link to profile. Will be useful to get real names
-        #link=posts[i].find_element_by_xpath('.//a').get_attribute('href')
-        #will use above with driver.execute_script("window.history.go(-1)")
-        #to return to original page after getting names from profile. (snippet from stackoverflow)
-        link=posts[i].find_element_by_xpath('.//a[@target="_blank"]').get_attribute('href')
-    except:
-        link=None
-    info.append((name, vizpic,link))
+pattern=re.compile(r'https://data.world/S+')
+for week_num,week_url in enumerate(week_urls):
+    driver.get(week_url)
+#get post
+    posts=driver.find_elements_by_xpath("//div[@class='post__thumbnail___33jZY DatasetCard__thumbnail___33EHZ']")
+    for i in range(1,len(posts)):
+        tag_name = posts[i].find_element_by_xpath(".//a[@class='post__username___YIalv']")
+        dw_name=tag_name.text
+        try:
+            vizpic=posts[i].find_element_by_xpath(".//img")
+            vizpic=vizpic.get_attribute('src')
+        except:
+            vizpic=None
+        try:
+            #first a leads to link to profile. Will be useful to get real names
+            #link=posts[i].find_element_by_xpath('.//a').get_attribute('href')
+            #will use above with driver.execute_script("window.history.go(-1)")
+            #to return to original page after getting names from profile. (snippet from stackoverflow)
+            link=posts[i].find_element_by_xpath('.//a[@target="_blank"]').get_attribute('href')
+            '''
+            need to adjust below while loop
+            tag_string=1
+            while re.match(pattern,link)==True:
+                link=posts[i].find_element_by_xpath('.//a[@target="_blank"]'+str([tag_string])).get_attribute('href')
+                tag_string+=1
+            '''
+        except:
+            link=None
+        info.append((dw_name, vizpic,link,week_num+1))
 
-data=pd.DataFrame(info,columns=['Name','VizPic', 'Link'])
-#data.to_csv('datadotworld_wk13_vizzes.csv',index=False)
+data=pd.DataFrame(info,columns=['DwName','ParticipantName','VizPic', 'Link','WeekNumber'])
+data.to_csv('datadotworld_full_scrap_attempt.csv',index=False)
 
 #signout and close the window
 time.sleep(3)
