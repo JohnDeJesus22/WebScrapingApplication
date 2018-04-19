@@ -47,7 +47,7 @@ for week_num,week_url in enumerate(week_urls):
     posts=driver.find_elements_by_xpath("//div[@class='post__thumbnail___33jZY DatasetCard__thumbnail___33EHZ']")
     for i in range(1,len(posts)):
         tag_name = posts[i].find_element_by_xpath(".//a[@class='post__username___YIalv']")
-        dw_name=tag_name.text
+        dw_name=tag_name.text[1:]
         try:
             vizpic=posts[i].find_element_by_xpath(".//img")
             vizpic=vizpic.get_attribute('src')
@@ -70,8 +70,22 @@ for week_num,week_url in enumerate(week_urls):
             link=None
         info.append((dw_name, vizpic,link,week_num+1))
 
-data=pd.DataFrame(info,columns=['DwName','ParticipantName','VizPic', 'Link','WeekNumber'])
-data.to_csv('datadotworld_full_scrap_attempt.csv',index=False)
+#create data frame
+data=pd.DataFrame(info,columns=['DwName','VizPic', 'Link','WeekNumber'])
+
+#scrap real names of participants based on data.world username
+real_names=[]
+DwName_unique=data['DwName'].unique().tolist()
+for name in DwName_unique:
+    driver.get('https://data.world/'+ name)
+    real_name=driver.find_element_by_xpath("//span[@class='dw-name UserCard__displayname___1s6YY']")
+    real_name=real_name.text
+    real_names.append(real_name)
+
+#create dictionary to map on a new column
+dw_to_real_dict=dict(zip(DwName_unique,real_names))
+data['RealName']=data['DwName'].map(dw_to_real_dict)
+
 
 #signout and close the window
 time.sleep(3)
@@ -80,3 +94,7 @@ time.sleep(5)
 driver.find_element_by_xpath("//li[@class='Header__itemSignOut___UfV3_']").click()
 time.sleep(5)
 driver.quit()
+
+#export csv 
+data.to_csv('datadotworld_full_scrap_attempt.csv',index=False)
+
